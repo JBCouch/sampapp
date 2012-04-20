@@ -12,12 +12,15 @@
 require 'spec_helper'
 
 describe User do
-  before { @user = User.new(name: "Example Name", email: "user@example.com") }
+  before { @user = User.new(name: "Example Name", email: "user@example.com", password: "foodbar", password_confirmation: "foodbar") }
 
   subject { @user }
 
   it { should respond_to(:name) }
   it { should respond_to(:email) }
+  it { should respond_to(:password_digest) }
+  it { should respond_to(:password) }
+  it { should respond_to(:password_confirmation) }
 
   it { should be_valid }
 
@@ -62,9 +65,24 @@ describe User do
   		user_with_same_email = @user.dup
   		user_with_same_email.save
   	end
-
   	it { should_not be_valid}
-
   end
-  
+
+  describe "when password and password confirmation is empty" do
+  	before { @user.password = @user.password_confirmation = " " }
+  	it { should_not be_vaild }
+  end
+
+  describe "when password and password_confirmation don't match" do
+  	before { @user.password_confirmation = "mismatch" }
+  	it { should_not be_valid }
+  end
+
+  describe "when password_confirmation is nil" do
+  	before { @user.password_confirmation = nil }
+  	it { should_not be_valid }
+  end
+
+
+
 end
